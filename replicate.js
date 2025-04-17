@@ -40,39 +40,35 @@ app.post("/imageApi", async (req, res) => {
 
     console.log("🧼 Restoring face with GFPGAN...");
 
+    // const output = await replicate.run(
+    //   "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
+    //   {
+    //     input: {
+    //       img: imageBase64,
+    //       scale: 2,
+    //       version: "v1.4",
+    //     },
+    //   }
+    // );
+
+    // const restoredImageURL = output.url().href;
+    // console.log("✅ Restored image URL:", restoredImageURL);
+
+    // if (!restoredImageURL || !restoredImageURL.startsWith("http")) {
+    //   throw new Error("Invalid restored image URL from Replicate.");
+    // }
     const output = await replicate.run(
-      "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
+      "microsoft/bringing-old-photos-back-to-life:c75db81db6cbd809d93cc3b7e7a088a351a3349c9fa02b6d393e35e0d51ba799",
       {
         input: {
-          img: imageBase64,
-          scale: 2,
-          version: "v1.4",
+          image: imageBase64, // Input your base64 image
+          HR: false,
+          with_scratch: false,
         },
       }
     );
 
-    const restoredImageURL = output.url().href;
-    console.log("✅ Restored image URL:", restoredImageURL);
-
-    if (!restoredImageURL || !restoredImageURL.startsWith("http")) {
-      throw new Error("Invalid restored image URL from Replicate.");
-    }
-    const output2 = await replicate.run(
-      "stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
-      {
-        input: {
-          image: restoredImageURL, // Input your base64 image
-          // Add any required input parameters for the new model here
-          prompt: "repair damaged image", // Model-specific parameter (adjust accordingly)
-          scheduler: "K_EULER",
-          num_outputs: 1,
-          guidance_scale: 7.5,
-          num_inference_steps: 50,
-        },
-      }
-    );
-
-    const repairedImageURL = output2[0].url().href;
+    const repairedImageURL = output.url().href;
     console.log("✅ Repaired image URL:", repairedImageURL);
     if (!repairedImageURL || !repairedImageURL.startsWith("http")) {
       throw new Error("Invalid repaired image URL from Replicate.");

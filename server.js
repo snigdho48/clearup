@@ -24,7 +24,10 @@ app.use(cors(corsOptions));
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
-
+app.get("/", (req, res) => {
+  res.send("Hello from the server!");
+}
+);
 app.post("/imageApi", async (req, res) => {
   try {
     const { image } = req.body; // Get the base64 image string from the request body

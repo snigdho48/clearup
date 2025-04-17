@@ -18,11 +18,13 @@ const PORT = process.env.PORT || 9000;
 
 // Middleware
 app.use(express.json({ limit: "10mb" })); // ⬅️ support large base64 uploads
-const corsOptions = {
-  origin: ["http://example.com", "http://localhost:3000"], // List of allowed origins
-  methods: ["GET", "POST", "PUT", "DELETE"], // List of allowed methods
-  allowedHeaders: ["Content-Type", "Authorization"], // List of allowed headers
-};
+app.use(
+  cors({
+    origin: ["https://ghibli.yoursite.com", "https://clearup.yoursite.com"], // add your domains
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 app.use(cors(corsOptions));
 
 // Replicate instance

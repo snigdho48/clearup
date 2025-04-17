@@ -11,12 +11,13 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const corsOptions = {
-  origin: ["http://example.com", "http://localhost:3000"], // List of allowed origins
-  methods: ["GET", "POST", "PUT", "DELETE"], // List of allowed methods
-  allowedHeaders: ["Content-Type", "Authorization"], // List of allowed headers
-};
-
+app.use(
+  cors({
+    origin: ["https://ghibli.yoursite.com", "https://clearup.yoursite.com"], // add your domains
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 const app = express();
 app.use(express.json({ limit: "10mb" })); // To handle large base64 payloads
 const PORT = process.env.PORT || 9080;

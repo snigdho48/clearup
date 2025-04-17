@@ -33,23 +33,23 @@ app.post("/imageApi", async (req, res) => {
     // 🧼 Step 1: Face restoration with GFPGAN
     console.log("🧼 Restoring face with GFPGAN...");
     const restoredOutput = await replicate.run(
-      "colinmcdonnell22/ghiblify:b4014c6ade5c1ac4c0d90ee5ea26ee9cf56ad28ee8a705737a0be6cdfdc3ac2a",
+      "colinmcdonnell22/ghiblify-3:407b7fd425e00eedefe7db3041662a36a126f1e4988e6fbadfc49b157159f015",
       {
         input: {
-          image:image,
+          image: image,
           model: "dev",
-          prompt: "recreate this image in the style of ghibli holding a drink name clearup",
+          prompt: "recreate this image in ghibli style",
           go_fast: false,
-          lora_scale: 0.95,
+          lora_scale: 0.85,
           megapixels: "1",
           num_outputs: 1,
-
+          aspect_ratio: "1:1",
           output_format: "jpg",
-          guidance_scale: 3.5,
+          guidance_scale: 3,
           output_quality: 100,
-          prompt_strength: 0.65,
+          prompt_strength: 0.7,
           extra_lora_scale: 1,
-          num_inference_steps: 32,
+          num_inference_steps: 28,
         },
       }
     );

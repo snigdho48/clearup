@@ -57,8 +57,29 @@ app.post("/imageApi", async (req, res) => {
     if (!restoredImageURL || !restoredImageURL.startsWith("http")) {
       throw new Error("Invalid restored image URL from Replicate.");
     }
+    const output2 = await replicate.run(
+      "stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
+      {
+        input: {
+          image: restoredImageURL, // Input your base64 image
+          // Add any required input parameters for the new model here
+          prompt: "repair damaged image", // Model-specific parameter (adjust accordingly)
+          scheduler: "K_EULER",
+          num_outputs: 1,
+          guidance_scale: 7.5,
+          num_inference_steps: 50,
+        },
+      }
+    );
 
-    res.json({ image: restoredImageURL });
+    const repairedImageURL = output2[0].url().href;
+    console.log("✅ Repaired image URL:", repairedImageURL);
+    if (!repairedImageURL || !repairedImageURL.startsWith("http")) {
+      throw new Error("Invalid repaired image URL from Replicate.");
+    }
+    // Send the repaired image URL as a response
+    res.json({ image: repairedImageURL });
+
   } catch (err) {
     console.error("❌ Error processing image:", err.message);
     res.status(500).send("Something went wrong.");

@@ -8,7 +8,6 @@
     * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f5f7fa;
       margin: 0;
       padding: 0;
       display: flex;
@@ -106,6 +105,21 @@
       font-size: 60px;
       margin-bottom: 10px;
     }
+#downloadBtn {
+      background-color: #28a745;
+      display: none;
+      color: white;
+      border: none;
+      margin: 10px 0;
+      padding: 12px 25px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #downloadBtn:hover {
+      background-color: #218838;
+    }
     
   </style>
 </head>
@@ -128,6 +142,7 @@
       </div>
       <img id="preview" src="#" alt="Preview" />
       <button type="button" >Process Image</button>
+      <button id="downloadBtn" style="display:none;">Download</button>
       <div id="status"></div>
     </div>
   </div>
@@ -138,6 +153,7 @@
     const statusText = document.getElementById("status");
     const overlay = document.getElementById("overlay");
     const fileDropLabel = document.getElementById("fileDropLabel");
+    const downloadBtn = document.getElementById("downloadBtn");
     let currentFile = null;
     let dragCounter = 0;
     let base64Image = '';
@@ -222,7 +238,15 @@
           preview.src = imageSrc;
           preview.style.display = "block";
           console.log("Image URL:", imageSrc);
-
+          downloadBtn.style.display = "block";
+          downloadBtn.onclick = () => {
+            const link = document.createElement("a");
+            link.href = imageSrc;
+            link.download = "processed_image.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          };
           preview.onerror = () => {
             statusText.textContent = "⚠️ Image failed to load (maybe expired or blocked).";
             preview.style.display = "none";

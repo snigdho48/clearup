@@ -19,14 +19,13 @@ const PORT = process.env.PORT || 9000;
 // Middleware
 app.use(express.json({ limit: "10mb" })); // ⬅️ support large base64 uploads
 app.use(cors());
-app.options("*", cors()); 
 
 // Replicate instance
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 app.get("/", (req, res) => {
-  res.send("Hello from the server!");
+  res.send("Hello from the server2!");
 });
 // POST endpoint for base64 image
 app.post("/imageApi", async (req, res) => {

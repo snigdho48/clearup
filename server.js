@@ -14,7 +14,6 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
-app.options("*", cors()); 
 app.use(express.json({ limit: "10mb" })); // To handle large base64 payloads
 const PORT = process.env.PORT || 9080;
 const replicate = new Replicate({

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restore Your Old Photo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+          height: 600px;
+      width: 300px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .upload-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 240px;
+      text-align: center;
+    }
+    .custom-file-upload {
+      border: 2px dashed #007bff;
+      padding: 30px 20px;
+      border-radius: 10px;
+      background-color: #f9fbff;
+      color: #007bff;
+      cursor: pointer;
+      margin-bottom: 15px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+    .custom-file-upload:hover {
+      background-color: #eef7ff;
+    }
+    .custom-file-upload input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    #preview {
+      margin-top: 15px;
+      max-width: 100%;
+      max-height: 60vh;
+      border-radius: 10px;
+      display: none;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      margin: 10px 0;
+      padding: 12px 25px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #status {
+      margin-top: 15px;
+      font-weight: 500;
+      min-height: 20px;
+    }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,123,255,0.15);
+      backdrop-filter: blur(3px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .overlay.show {
+      display: flex;
+    }
+    .overlay-content {
+      text-align: center;
+      font-size: 24px;
+      color: #007bff;
+      font-weight: 600;
+    }
+    .overlay-content .icon {
+      font-size: 60px;
+      margin-bottom: 10px;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-content">
+      <div class="icon">➕</div>
+      Drop your image here
+    </div>
+  </div>
+
+  <h1>AI Clearup Your Old Photo </h1>
+
+  <div class="upload-container">
+    <div id="uploadForm">
+      <div class="custom-file-upload" id="fileDropLabel">
+        Click or drag an image anywhere on the screen
+        <input id="file-upload" type="file" name="image" accept="image/*" />
+      </div>
+      <img id="preview" src="#" alt="Preview" />
+      <button type="button" >Process Image</button>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <script>
+    const uploadInput = document.getElementById("file-upload");
+    const preview = document.getElementById("preview");
+    const statusText = document.getElementById("status");
+    const overlay = document.getElementById("overlay");
+    const fileDropLabel = document.getElementById("fileDropLabel");
+    let currentFile = null;
+    let dragCounter = 0;
+    let base64Image = '';
+
+    function showPreview(file) {
+
+      const reader = new FileReader();
+      //convert to base64 
+      reader.onload = function (e) {
+        base64Image = e.target.result; // full data:image/jpeg;base64,...
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    window.addEventListener("dragenter", (e) => {
+      e.preventDefault();
+      dragCounter++;
+      overlay.classList.add("show");
+    });
+
+    window.addEventListener("dragleave", (e) => {
+      dragCounter--;
+      if (dragCounter === 0) overlay.classList.remove("show");
+    });
+
+    window.addEventListener("dragover", (e) => e.preventDefault());
+
+    window.addEventListener("drop", (e) => {
+      e.preventDefault();
+      overlay.classList.remove("show");
+      dragCounter = 0;
+
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        currentFile = files[0];
+        uploadInput.files = files;
+        showPreview(currentFile);
+      }
+    });
+
+    uploadInput.addEventListener("change", () => {
+      const file = uploadInput.files[0];
+      if (file) {
+        currentFile = file;
+        showPreview(file);
+      }
+    });
+
+    document.querySelector("button").addEventListener("click", processImage);
+    async function processImage(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (!currentFile) {
+        alert("Please upload an image first.");
+        return;
+      }
+      fileDropLabel.style.display = "none ";
+
+
+
+      statusText.textContent = "Processing... Please wait ⏳";
+
+        await fetch("http://192.168.68.66:5000/imageApi", {
+        method: "POST",
+      headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: base64Image }) // full base64 string
+      })
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to process image.");
+        return response.json();
+      })
+      .then(async (result) => {
+        console.log("✅ Result from server:", result);
+
+        if (result.image) {
+          const imageSrc = result.image;
+          preview.src = imageSrc;
+          preview.style.display = "block";
+          console.log("Image URL:", imageSrc);
+
+          preview.onerror = () => {
+            statusText.textContent = "⚠️ Image failed to load (maybe expired or blocked).";
+            preview.style.display = "none";
+          };
+
+          statusText.textContent = "✅ Image processed successfully!";
+        } else {
+          statusText.textContent = "❌ No image URL returned.";
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Error:", error);
+        statusText.textContent = "❌ Error occurred. Try again later.";
+      });
+    }
+  </script>
+
+</body>
+</html>

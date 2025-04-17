@@ -20,7 +20,10 @@ const PORT = process.env.PORT || 9000;
 app.use(express.json({ limit: "10mb" })); // ⬅️ support large base64 uploads
 app.use(
   cors({
-    origin: ["https://ghibli.yoursite.com", "https://clearup.yoursite.com"], // add your domains
+    origin: [
+      "https://ghibli.reachableads.com",
+      "https://clearup.reachableads.com",
+    ], // add your domains
     methods: ["GET", "POST"],
     credentials: true,
   })

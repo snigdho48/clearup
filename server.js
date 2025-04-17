@@ -13,7 +13,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(
   cors({
-    origin: ["https://ghibli.yoursite.com", "https://clearup.yoursite.com"], // add your domains
+    origin: [
+      "https://ghibli.reachableads.com",
+      "https://clearup.reachableads.com",
+    ], // add your domains
     methods: ["GET", "POST"],
     credentials: true,
   })

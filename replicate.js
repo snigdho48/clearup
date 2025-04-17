@@ -41,7 +41,7 @@ app.post("/imageApi", async (req, res) => {
     console.log("🧼 Restoring face with GFPGAN...");
 
     const output = await replicate.run(
-      "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
+      "jingyunliang/restoreformer:8ea27d61c5cb62f32dc6c56b0d6f73eb7d25a232c41df1cbcff1ff423405a47c",
       {
         input: {
           img: imageBase64,

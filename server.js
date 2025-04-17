@@ -21,7 +21,6 @@ app.use(
 const app = express();
 app.use(express.json({ limit: "10mb" })); // To handle large base64 payloads
 const PORT = process.env.PORT || 9080;
-app.use(cors(corsOptions));
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });

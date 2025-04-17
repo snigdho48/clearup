@@ -25,7 +25,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(cors(corsOptions));
 
 // Replicate instance
 const replicate = new Replicate({

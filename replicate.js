@@ -17,9 +17,13 @@ const app = express();
 const PORT = process.env.PORT || 9000;
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" })); // ⬅️ support large base64 uploads
-
+const corsOptions = {
+  origin: ["http://example.com", "http://localhost:3000"], // List of allowed origins
+  methods: ["GET", "POST", "PUT", "DELETE"], // List of allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"], // List of allowed headers
+};
 // Replicate instance
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,

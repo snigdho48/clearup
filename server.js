@@ -11,17 +11,10 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(
-  cors({
-    origin: [
-      "https://ghibli.reachableads.com",
-      "https://clearup.reachableads.com",
-    ], // add your domains
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+
 const app = express();
+app.use(cors());
+app.options("*", cors()); 
 app.use(express.json({ limit: "10mb" })); // To handle large base64 payloads
 const PORT = process.env.PORT || 9080;
 const replicate = new Replicate({

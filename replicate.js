@@ -18,16 +18,8 @@ const PORT = process.env.PORT || 9000;
 
 // Middleware
 app.use(express.json({ limit: "10mb" })); // ⬅️ support large base64 uploads
-app.use(
-  cors({
-    origin: [
-      "https://ghibli.reachableads.com",
-      "https://clearup.reachableads.com",
-    ], // add your domains
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+app.use(cors());
+app.options("*", cors()); 
 
 // Replicate instance
 const replicate = new Replicate({

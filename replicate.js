@@ -40,42 +40,42 @@ app.post("/imageApi", async (req, res) => {
 
     console.log("🧼 Restoring face with GFPGAN...");
 
-    // const output = await replicate.run(
-    //   "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
-    //   {
-    //     input: {
-    //       img: imageBase64,
-    //       scale: 2,
-    //       version: "v1.4",
-    //     },
-    //   }
-    // );
-
-    // const restoredImageURL = output.url().href;
-    // console.log("✅ Restored image URL:", restoredImageURL);
-
-    // if (!restoredImageURL || !restoredImageURL.startsWith("http")) {
-    //   throw new Error("Invalid restored image URL from Replicate.");
-    // }
     const output = await replicate.run(
-      "microsoft/bringing-old-photos-back-to-life:c75db81db6cbd809d93cc3b7e7a088a351a3349c9fa02b6d393e35e0d51ba799",
+      "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
       {
         input: {
-          image: imageBase64, // Input your base64 image
-          HR: false,
-          with_scratch: false,
+          img: imageBase64,
+          scale: 2,
+          version: "v1.4",
         },
       }
     );
 
-    const repairedImageURL = output.url().href;
-    console.log("✅ Repaired image URL:", repairedImageURL);
-    if (!repairedImageURL || !repairedImageURL.startsWith("http")) {
-      throw new Error("Invalid repaired image URL from Replicate.");
-    }
-    // Send the repaired image URL as a response
-    res.json({ image: repairedImageURL });
+    const restoredImageURL = output.url().href;
+    console.log("✅ Restored image URL:", restoredImageURL);
 
+    if (!restoredImageURL || !restoredImageURL.startsWith("http")) {
+      throw new Error("Invalid restored image URL from Replicate.");
+    }
+    
+
+
+        const output2 = await replicate.run(
+          "piddnad/ddcolor:ca494ba129e44e45f661d6ece83c4c98a9a7c774309beca01429b58fce8aa695",
+          {
+            input: {
+              image: restoredImageURL,
+              model_size: "large",
+            },
+          }
+        );
+
+    const colorizedImageURL = output2.url().href;
+    console.log("🎨 Colorized image URL:", colorizedImageURL)
+    if (!colorizedImageURL || !colorizedImageURL.startsWith("http")) {
+      throw new Error("Invalid colorized image URL from Replicate.");
+    }
+    res.json({ image: colorizedImageURL });
   } catch (err) {
     console.error("❌ Error processing image:", err.message);
     res.status(500).send("Something went wrong.");
